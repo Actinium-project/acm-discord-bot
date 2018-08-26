@@ -34,10 +34,13 @@ const prepareData = (command, data) => {
 `;
       }
       case 'fiatprice': {
+      const usd = Number((data.USD).toFixed(4));
+      const eur = Number((data.EUR).toFixed(4))
+      const gbp = Number((data.GBP).toFixed(4));
          return `
-**USD:** ${data.USD}
-**EUR:** ${data.EUR}
-**GBP:** ${data.GBP}
+**USD:** ${usd}
+**EUR:** ${eur}
+**GBP:** ${gbp}
 `;
       }
       case 'supply': {
