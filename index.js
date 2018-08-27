@@ -13,12 +13,29 @@ const instance = axios.create({
   })
 });
 
+const abbreviations = {
+  'diff':'difficulty',
+  'hash':'hashrate',
+  'mcap':'marketcap',
+  'net':'networkinfo',
+  'best':'bestblockhash',
+  'count':'blockcount', 
+};
+
 const delay = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
 
 const client = new Discord.Client();
 const prefix = config.prefix;
 
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max - 3)}...` : str;
+
+const mapAbbreviation = (term) => {
+   let cmd = abbreviations[term];
+   if (cmd)
+     return cmd;
+   else
+     return term;
+}
 
 const prepareData = (command, data) => {
     switch(command) {
@@ -105,12 +122,12 @@ return `
 *!price*: get BTC Price in satoshis
 *!fiatprice*: get $, €, and £ price
 *!supply*: get amount of mined ACMs
-*!marketcap*: get marketcap in USD
-*!hashrate*: get current hashrate in GH
-*!difficulty*: get current difficulty
-*!networkinfo*: get network info from bot's node
-*!bestblockhash*: get hash of the latest block
-*!blockcount*: get amount of currently mined blocks
+*!marketcap* or *!mcap*: get marketcap in USD
+*!hashrate* or *!hash*: get current hashrate in GH
+*!difficulty* or *!diff*: get current difficulty
+*!networkinfo* or *!net*: get network info from bot's node
+*!bestblockhash* or *!best*: get hash of the latest block
+*!blockcount* or *!count*: get amount of currently mined blocks
 *!block blockhash*: get details from given block
 `;
       }
@@ -128,8 +145,8 @@ client.on('message', async (message) => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).split(/ +/);
-	const command = args.shift().toLowerCase();
-
+	const command = mapAbbreviation(args.shift().toLowerCase());
+       
 	if (!args.length && !command.startsWith('acm')) {
              try {
                 const response = await instance.get(`https://api.actinium.org/v1/acm/${command}`);
