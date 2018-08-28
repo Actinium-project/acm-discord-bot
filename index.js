@@ -26,7 +26,9 @@ const delay = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
 
 const client = new Discord.Client();
 const prefix = config.prefix;
-
+const whitelistedChannels = config.channels.whitelist;
+const blacklistedChanneld = config.channels.blacklist;
+ 
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max - 3)}...` : str;
 
 const mapAbbreviation = (term) => {
@@ -136,17 +138,24 @@ return `
     }
 };
 
+const isChannelWhitelisted = (channelId) => {
+  return whitelistedChannels.includes(channelId);
+};
+
 client.on('ready', () => {
 	console.log('Actinium Bot is ready!');
 });
 
 client.on('message', async (message) => {
         // console.log(`Received message: ${message}`);
-	if (!message.content.startsWith(prefix) || message.author.bot) return;
+        if (!message.content.startsWith(prefix) || message.author.bot) return;
         message.content = message.content.toLowerCase();
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const command = mapAbbreviation(args.shift().toLowerCase());
-
+        const channelId = message.channel.id;
+        if (!isChannelWhitelisted(channelId)) {
+          return;
+        }
 	if (!args.length && !command.startsWith('acm')) {
              try {
                 const response = await instance.get(`https://api.actinium.org/v1/acm/${command}`);

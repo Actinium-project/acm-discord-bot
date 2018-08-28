@@ -1,4 +1,12 @@
 {
     "prefix": "!",
-    "token": "PUT_YOUR_DISCORD_TOKEN_HERE"
+    "token": "PUT_YOUR_DISCORD_TOKEN_HERE",
+    "channels": {
+        "whitelist": [
+         "WHITELISTED_CHANNEL_ID"
+        ],
+        "blacklist": [
+         "BLACKLISTED_CHANNEL_ID"
+        ]
+    }
 }
